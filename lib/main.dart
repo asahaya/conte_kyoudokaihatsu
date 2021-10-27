@@ -1,4 +1,5 @@
-import 'package:conte_kyoudokaihatsu/home_page.dart';
+
+import 'package:conte_kyoudokaihatsu/login_page.dart';
 import 'package:flutter/material.dart';
 
 void main(){
@@ -11,8 +12,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "conte",
-      theme: ThemeData.dark(),
-      home: HomePage(),
+      theme: ThemeData(
+        appBarTheme: AppBarTheme(
+          backgroundColor: Color(0xFFFDE24F),
+          foregroundColor: Color(0xFF000000),
+        )
+      ),
+      home: LoginPage(),
     );
   }
 }

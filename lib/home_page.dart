@@ -1,5 +1,5 @@
 //androidSDK16-->21
-import 'package:conte_kyoudokaihatsu/feed_page.dart';
+import 'package:conte_kyoudokaihatsu/timeline_page.dart';
 import 'package:conte_kyoudokaihatsu/notification_page.dart';
 import 'package:conte_kyoudokaihatsu/post_page.dart';
 import 'package:conte_kyoudokaihatsu/profile_page.dart';
@@ -24,7 +24,7 @@ class _MyAppState extends State<HomePage> {
     // TODO: implement initState
     super.initState();
     _pages=[
-      FeedPage(),
+      TimeLinePage(),
       SearchPage(),
       PostPage(),
       NotificationPage(),
@@ -40,8 +40,9 @@ class _MyAppState extends State<HomePage> {
           type: BottomNavigationBarType.fixed,//横広がり固定
           showSelectedLabels: true, //選択時にLabel表示
           showUnselectedLabels: true,//選択以外のLabel表示
-          selectedItemColor: Colors.yellow,
-          backgroundColor: Colors.deepPurpleAccent,
+          selectedItemColor: Color(0xFFFDE24F),
+          backgroundColor: Color(0xFF27AA96),
+          unselectedItemColor: Color(0xFFFFFFFF),
           currentIndex:_currentIndex,
           onTap: (index){
             setState(() {
