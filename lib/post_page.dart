@@ -1,7 +1,59 @@
 import 'package:flutter/material.dart';
 
-class PostPage extends StatelessWidget {
+class PostPage extends StatefulWidget {
+  @override
+  _PostPageState createState() => _PostPageState();
+}
 
+class _PostPageState extends State<PostPage> {
+  List<DropdownMenuItem<int>> _item = [];
+  int _selectItem = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    setItems();
+    _selectItem = _item[0].value!; //強制アクセス
+  }
+
+  void setItems() {
+    _item
+      ..add(DropdownMenuItem(
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            border: Border.all(color: Colors.black),
+          ),
+            child: Text(
+          "配信プラットフォームを選択",
+        )),
+        value: 1,
+      ))
+      ..add(DropdownMenuItem(
+        child: Text(
+          "TVer",
+        ),
+        value: 10,
+      ))
+      ..add(DropdownMenuItem(
+        child: Text(
+          "Youtube",
+        ),
+        value: 20,
+      ))
+      ..add(DropdownMenuItem(
+        child: Text(
+          "radiko",
+        ),
+        value: 30,
+      ))
+      ..add(DropdownMenuItem(
+        child: Text(
+          "Netflix",
+        ),
+        value: 40,
+      ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -9,14 +61,25 @@ class PostPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.yellow,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black,),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.black,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
-          Icon(Icons.done, color: Colors.black,),
-          SizedBox(width: 20,),
+          Icon(
+            Icons.done,
+            color: Colors.black,
+          ),
+          SizedBox(
+            width: 20,
+          ),
         ],
-        title: Text("記事を投稿する", style: TextStyle(color: Colors.black),),
+        title: Text(
+          "記事を投稿する",
+          style: TextStyle(color: Colors.black),
+        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -35,7 +98,20 @@ class PostPage extends StatelessWidget {
                       labelText: "Title",
                       hintText: "コンテンツ名を入力"),
                 ),
-                SizedBox(height: 20,),
+                DropdownButtonFormField(
+                  autofocus: false,
+                  items: _item,
+                  value: _selectItem,
+                  focusColor: Colors.red,
+                  onChanged: (int? selectValue) {
+                    setState(() {
+                      _selectItem = selectValue!;
+                    });
+                  },
+                ),
+                SizedBox(
+                  height: 20,
+                ),
                 Container(),
                 TextFormField(
                   maxLines: 5,
@@ -48,11 +124,13 @@ class PostPage extends StatelessWidget {
                       labelText: "レビュー",
                       hintText: "コンテンツ名を入力"),
                 ),
-                SizedBox(height: 20,),
+                SizedBox(
+                  height: 20,
+                ),
                 Container(
                     decoration: BoxDecoration(
                       color: Color(0xFF3CD4BD),
-                      borderRadius:BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     child: SliderBar()),
                 SwitchBar(),
@@ -88,15 +166,14 @@ Widget BoxPicture(BuildContext context) {
 }
 
 class SliderBar extends StatefulWidget {
-
   @override
   _SliderBarState createState() => _SliderBarState();
 }
 
 class _SliderBarState extends State<SliderBar> {
   var _sliderValue = 2.5;
-  var _sliderText="評価";
-  double _changeValue=0.0;
+  var _sliderText = "評価";
+  double _changeValue = 0.0;
 
   @override
   Widget build(BuildContext context) {
@@ -113,41 +190,47 @@ class _SliderBarState extends State<SliderBar> {
             activeColor: Colors.yellow,
             inactiveColor: Color(0xFFFFFFFF),
             onChanged: (double value) {
-            setState(() {
-              _sliderValue = value.roundToDouble();
+              setState(() {
+                _sliderValue = value.roundToDouble();
 
-              _sliderText="$_sliderValue";
-              _changeValue=double.parse(_sliderText.toString());
-              _changeValue/=10;
-            });
-          },),
+                _sliderText = "$_sliderValue";
+                _changeValue = double.parse(_sliderText.toString());
+                _changeValue /= 10;
+              });
+            },
+          ),
         ),
         Expanded(
           flex: 2,
           child: Row(
             children: [
-              Center(child: Icon(Icons.star,color: Colors.yellow,)),
+              Center(
+                  child: Icon(
+                Icons.star,
+                color: Colors.yellow,
+              )),
               SizedBox(width: 5),
-              Center(child: Text(_changeValue.toString(),style: TextStyle(fontSize: 20),)),
+              Center(
+                  child: Text(
+                _changeValue.toString(),
+                style: TextStyle(fontSize: 20),
+              )),
             ],
           ),
         ),
-
       ],
     );
   }
 }
 
 class SwitchBar extends StatefulWidget {
-
   @override
   _SwitchBarState createState() => _SwitchBarState();
 }
 
 class _SwitchBarState extends State<SwitchBar> {
-
-  bool _switchValue=true;
-  String _switchText="ネタバレ";
+  bool _switchValue = true;
+  String _switchText = "ネタバレ";
 
   @override
   Widget build(BuildContext context) {
@@ -157,13 +240,13 @@ class _SwitchBarState extends State<SwitchBar> {
             value: _switchValue,
             title: Text(_switchText),
             activeColor: Color(0xFF3CD4BD),
-            onChanged: (bool value){
+            onChanged: (bool value) {
               setState(() {
-                _switchValue=value;
-                if(_switchValue==true){
-                  _switchText="ネタバレあり";
-                }else{
-                  _switchText="ネタバレなし";
+                _switchValue = value;
+                if (_switchValue == true) {
+                  _switchText = "ネタバレあり";
+                } else {
+                  _switchText = "ネタバレなし";
                 }
               });
             }),
@@ -172,4 +255,3 @@ class _SwitchBarState extends State<SwitchBar> {
     );
   }
 }
-

@@ -41,7 +41,7 @@ class _MyAppState extends State<HomePage> {
           showSelectedLabels: true, //選択時にLabel表示
           showUnselectedLabels: true,//選択以外のLabel表示
           selectedItemColor: Color(0xFFFDE24F),
-          backgroundColor: Color(0xFF27AA96),
+          backgroundColor: Color(0xFFBAB4B4),
           unselectedItemColor: Color(0xFFFFFFFF),
           currentIndex:_currentIndex,
           onTap: (index){

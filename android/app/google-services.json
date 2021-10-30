@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "839878914050",
+    "project_id": "conti-kyoudoukaihatsu",
+    "storage_bucket": "conti-kyoudoukaihatsu.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:839878914050:android:66b1a4a20b2c3d15a6b71b",
+        "android_client_info": {
+          "package_name": "com.example.conte_kyoudokaihatsu"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "839878914050-8sjtk2n1l8pc3b5fevcmvbiifmibebgi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.conte_kyoudokaihatsu",
+            "certificate_hash": "c641ebb5096933128e5a1e74f15959a2e0d3aeb0"
+          }
+        },
+        {
+          "client_id": "839878914050-bhb2e1ja375okgm8ndtei1dok6av0f1a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxGzLZhHuDIriEvT449ITKL6ClkioNuZg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "839878914050-bhb2e1ja375okgm8ndtei1dok6av0f1a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
