@@ -1,5 +1,5 @@
 //androidSDK16-->21
-import 'package:conte_kyoudokaihatsu/timeline_page.dart';
+import 'package:conte_kyoudokaihatsu/timeline/timeline_page.dart';
 import 'package:conte_kyoudokaihatsu/notification_page.dart';
 import 'package:conte_kyoudokaihatsu/post_page.dart';
 import 'package:conte_kyoudokaihatsu/profile_page.dart';

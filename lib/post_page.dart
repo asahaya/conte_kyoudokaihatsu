@@ -1,4 +1,9 @@
+import 'package:conte_kyoudokaihatsu/home_page.dart';
+import 'package:conte_kyoudokaihatsu/post_model.dart';
+import 'package:conte_kyoudokaihatsu/timeline/timeline_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class PostPage extends StatefulWidget {
   @override
@@ -7,26 +12,28 @@ class PostPage extends StatefulWidget {
 
 class _PostPageState extends State<PostPage> {
   List<DropdownMenuItem<int>> _item = [];
-  int _selectItem = 0;
+  int selectItem = 0;
+  bool switchValue = true;
+  String switchText = "ネタバレ";
 
   @override
   void initState() {
     super.initState();
     setItems();
-    _selectItem = _item[0].value!; //強制アクセス
+    selectItem = _item[0].value!; //強制アクセス
   }
 
   void setItems() {
     _item
       ..add(DropdownMenuItem(
         child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
-            border: Border.all(color: Colors.black),
-          ),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              border: Border.all(color: Colors.black),
+            ),
             child: Text(
-          "配信プラットフォームを選択",
-        )),
+              "配信プラットフォームを選択",
+            )),
         value: 1,
       ))
       ..add(DropdownMenuItem(
@@ -57,99 +64,141 @@ class _PostPageState extends State<PostPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.yellow,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: Colors.black,
-          ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        actions: [
-          Icon(
-            Icons.done,
-            color: Colors.black,
-          ),
-          SizedBox(
-            width: 20,
-          ),
-        ],
-        title: Text(
-          "記事を投稿する",
-          style: TextStyle(color: Colors.black),
-        ),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                TextFormField(
-                  obscureText: false,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      icon: Icon(Icons.tv),
-                      labelText: "Title",
-                      hintText: "コンテンツ名を入力"),
-                ),
-                DropdownButtonFormField(
-                  autofocus: false,
-                  items: _item,
-                  value: _selectItem,
-                  focusColor: Colors.red,
-                  onChanged: (int? selectValue) {
-                    setState(() {
-                      _selectItem = selectValue!;
-                    });
-                  },
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Container(),
-                TextFormField(
-                  maxLines: 5,
-                  obscureText: false,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      labelText: "レビュー",
-                      hintText: "コンテンツ名を入力"),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Container(
-                    decoration: BoxDecoration(
-                      color: Color(0xFF3CD4BD),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: SliderBar()),
-                SwitchBar(),
-                Text("Picture"),
-                Row(
-                  children: [
-                    BoxPicture(context),
-                    BoxPicture(context),
-                    BoxPicture(context),
-                    BoxPicture(context),
-                  ],
-                )
-              ],
+    return ChangeNotifierProvider<PostModel>(
+      create: (_) => PostModel(),
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.yellow,
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.black,
             ),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          actions: [
+            Consumer<PostModel>(builder: (context, model, child) {
+              return IconButton(
+                  onPressed: () async {
+                    try {
+                      await model.addPost();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => HomePage(),
+                        ),
+                      );
+                    } catch (e) {
+                      print(e);
+                    }
+                  },
+                  icon: Icon(Icons.done));
+            }),
+            SizedBox(
+              width: 20,
+            ),
+          ],
+          title: Text(
+            "記事を投稿する",
+            style: TextStyle(color: Colors.black),
+          ),
+        ),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Consumer<PostModel>(builder: (context, model, child) {
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    TextFormField(
+                      obscureText: false,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          icon: Icon(Icons.tv),
+                          labelText: "Title",
+                          hintText: "コンテンツ名を入力"),
+                      onChanged: (text) {
+                        model.title = text;
+                      },
+                    ),
+                    DropdownButtonFormField(
+                      autofocus: false,
+                      items: _item,
+                      value: selectItem,
+                      focusColor: Colors.red,
+                      onChanged: (int? selectValue) async{
+                          model.dropdownSetting(selectValue);
+                          model.platform=await model.dropdownSetting(selectValue);
+                          //
+                        // setState(() {
+                        //   _selectItem = selectValue!;
+                        // });
+                      },
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Container(),
+                    TextFormField(
+                        maxLines: 5,
+                        obscureText: false,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            labelText: "レビュー",
+                            hintText: "コンテンツ名を入力"),
+                        onChanged: (text) {
+                          model.review = text;
+                        }),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                        decoration: BoxDecoration(
+                          color: Color(0xFF3CD4BD),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: SliderBar()),
+                    // SwitchBar(),
+                    SwitchListTile(
+                        value: switchValue,
+                        title: Text(switchText),
+                        activeColor: Color(0xFF3CD4BD),
+                        onChanged: (bool value ) async{
+                          setState(() {
+                            switchValue = value;
+                            if (switchValue == true) {
+                              switchText = "ネタバレあり";
+                            } else {
+                              switchText = "ネタバレなし";
+                            }
+                            model.netabare=switchText;
+                          });
+                        }),
+                    Text("Picture"),
+                    Row(
+                      children: [
+                        BoxPicture(context),
+                        BoxPicture(context),
+                        BoxPicture(context),
+                        BoxPicture(context),
+                      ],
+                    )
+                  ],
+                ),
+              );
+            }),
           ),
         ),
       ),
     );
   }
+
 }
 
 Widget BoxPicture(BuildContext context) {
@@ -221,37 +270,41 @@ class _SliderBarState extends State<SliderBar> {
       ],
     );
   }
-}
 
-class SwitchBar extends StatefulWidget {
-  @override
-  _SwitchBarState createState() => _SwitchBarState();
 }
-
-class _SwitchBarState extends State<SwitchBar> {
-  bool _switchValue = true;
-  String _switchText = "ネタバレ";
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SwitchListTile(
-            value: _switchValue,
-            title: Text(_switchText),
-            activeColor: Color(0xFF3CD4BD),
-            onChanged: (bool value) {
-              setState(() {
-                _switchValue = value;
-                if (_switchValue == true) {
-                  _switchText = "ネタバレあり";
-                } else {
-                  _switchText = "ネタバレなし";
-                }
-              });
-            }),
-        // Text(_switchText,style: TextStyle(color: Colors.blue),),
-      ],
-    );
-  }
-}
+//
+// class SwitchBar extends StatefulWidget {
+//   @override
+//   _SwitchBarState createState() => _SwitchBarState();
+// }
+//
+// class _SwitchBarState extends State<SwitchBar> {
+//   bool _switchValue = true;
+//   String _switchText = "ネタバレ";
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Column(
+//       children: [
+//         SwitchListTile(
+//             value: _switchValue,
+//             title: Text(_switchText),
+//             activeColor: Color(0xFF3CD4BD),
+//             onChanged: (bool value) {
+//               setState(() {
+//                 _switchValue = value;
+//                 if (_switchValue == true) {
+//                   _switchText = "ネタバレあり";
+//                 } else {
+//                   _switchText = "ネタバレなし";
+//                 }
+//                 model.netabare=_switchText;
+//               });
+//             }),
+//         // Text(_switchText,style: TextStyle(color: Colors.blue),),
+//       ],
+//     );
+//   }
+// }
+//
+//
