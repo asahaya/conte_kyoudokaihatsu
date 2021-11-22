@@ -1,20 +1,19 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:conte_kyoudokaihatsu/domain/post.dart';
 import 'package:conte_kyoudokaihatsu/domain/postmenu.dart';
+import 'package:conte_kyoudokaihatsu/home_page.dart';
 import 'package:conte_kyoudokaihatsu/login_page.dart';
+import 'package:conte_kyoudokaihatsu/profile_page.dart';
 import 'package:conte_kyoudokaihatsu/timeline/timeline_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class TimeLinePage extends StatelessWidget {
-  final calImages = [
-    "assets/images/suiyoubithree.jpg",
-    "assets/images/suiyoubitwo.jpg",
-    "assets/images/suiyoubi.jpg",
-  ];
+
 
   @override
   Widget build(BuildContext context) {
+
     return ChangeNotifierProvider<TimeLineModel>(
       create: (_) => TimeLineModel()..fetchPost(),
       child: Scaffold(
@@ -28,7 +27,7 @@ class TimeLinePage extends StatelessWidget {
               return IconButton(
                   onPressed: () async {
                     await model.logout();
-                    Navigator.pushReplacement(context,
+                    Navigator.push(context,
                         MaterialPageRoute(builder: (_) => LoginPage()));
                   },
                   icon: Icon(Icons.logout));
@@ -48,16 +47,15 @@ class TimeLinePage extends StatelessWidget {
             final List<Post>? post = model.post;
 
             if (post == null) {
-              return CircularProgressIndicator();
+              return Center(child: CircularProgressIndicator());
             }
-
             final List<Widget> widgets = post
                 .map(
                   (posts) => SingleChildScrollView(
                     child: Card(
                       child: Container(
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black, width: 3),
+                          border: Border.all(color: Colors.black, width: 7),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Column(
@@ -73,51 +71,86 @@ class TimeLinePage extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: Container(
+                                    width: double.infinity,
                                     alignment: Alignment.center,
                                     decoration: BoxDecoration(
                                       border: Border.all(
                                           color: Colors.black, width: 3),
                                       borderRadius: BorderRadius.circular(20),
-                                      // image: DecorationImage(
-                                      //   image: AssetImage("assets/images/suiyoubi.jpg"),
-                                      // ),
                                     ),
-                                    child: CarouselSlider(
-                                      options: CarouselOptions(
-                                        autoPlay: true,
-                                        viewportFraction: 1,
-                                        enableInfiniteScroll: true,
-                                        // autoPlayAnimationDuration: Duration(milliseconds: 800),
-                                        // onPageChanged: callbackFunction,
-                                      ),
-                                      items: calImages.map((calImage) {
-                                        return Container(
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: Colors.black, width: 2),
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            // image: DecorationImage(
-                                            //   image: AssetImage("assets/images/suiyoubi.jpg"),
-                                            // ),
-                                          ),
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                            child: Image.asset(calImage),
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
+                                    child: posts.imageURL1!=null
+                                      ? Image.network(posts.imageURL1!,fit: BoxFit.cover,)
+                                        : Container(color: Colors.greenAccent,),
+                                    // child: CarouselSlider(
+                                    //   options: CarouselOptions(
+                                    //     autoPlay: true,
+                                    //     viewportFraction: 1,
+                                    //     enableInfiniteScroll: true,
+                                    //     // autoPlayAnimationDuration: Duration(milliseconds: 800),
+                                    //     // onPageChanged: callbackFunction,
+                                    //   ),
+                                    //
+                                    //   items: posts.imageURL1!((calImage) {
+                                    //     return Container(
+                                    //       decoration: BoxDecoration(
+                                    //         border: Border.all(
+                                    //             color: Colors.black, width: 2),
+                                    //         borderRadius:
+                                    //             BorderRadius.circular(20),
+                                    //         // image: DecorationImage(
+                                    //         //   image: AssetImage("assets/images/suiyoubi.jpg"),
+                                    //         // ),
+                                    //       ),
+                                    //       child: Container(
+                                    //         decoration: BoxDecoration(
+                                    //           borderRadius:
+                                    //               BorderRadius.circular(20),
+                                    //         ),
+                                    //         child: posts.imageURL1!=null
+                                    //         ? Image.asset(calImage.toString())
+                                    //         : null,
+                                    //       ),
+                                    //     );
+                                    //   }).toList(),
+                                    // ),
                                   ),
                                 ),
+                                // Container(
+                                //   height: double.infinity,
+                                //   child: posts.imageURL1!=null
+                                //       ? Image.network(posts.imageURL1!)
+                                //       : null,
+                                // ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     //star
-                                    StarReview(context),
+                                    //----
+                                    Column(
+                                      children: [
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        Container(
+                                          alignment: Alignment.center,
+                                          width: 50,
+                                          height: 20,
+                                          child: Consumer<TimeLineModel>(
+                                              builder: (context, model, child) {
+                                            return Text("★${posts.star}");
+                                          }),
+                                          decoration: BoxDecoration(
+                                            color:
+                                                Colors.yellow.withOpacity(0.7),
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            // border: Border.all(color: Colors.blue, width: 2),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
+                                    //----------
                                     SizedBox(
                                       width: 10,
                                     ),
@@ -165,7 +198,7 @@ class TimeLinePage extends StatelessWidget {
                                                 flex: 2,
                                                 child: Center(
                                                     child: Text(
-                                                  "10/31",
+                                                  posts.conteDate.toString(),
                                                   style: TextStyle(
                                                       fontSize: 20,
                                                       fontWeight:
@@ -187,6 +220,7 @@ class TimeLinePage extends StatelessWidget {
                                         children: [
                                           Container(
                                             height: 35,
+                                            alignment: Alignment.center,
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(10),
@@ -199,6 +233,7 @@ class TimeLinePage extends StatelessWidget {
                                                     child: Text(
                                                   posts.title,
                                                   style: TextStyle(
+
                                                       fontSize: 18,
                                                       fontWeight:
                                                           FontWeight.bold),
@@ -284,15 +319,28 @@ class TimeLinePage extends StatelessWidget {
                                           children: [
                                             Container(
                                               decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(7),
-                                                  border: Border.all(
-                                                      color: Colors.red,
-                                                      width: 3)),
+                                                borderRadius:
+                                                    BorderRadius.circular(7),
+                                                border: Border.all(
+                                                    color: model.netabareColor(
+                                                            posts.netabare)
+                                                        ? Colors.red
+                                                        : Colors
+                                                            .deepPurpleAccent,
+                                                    // color: model.netabareColor(posts.netabare),
+                                                    width: 3),
+                                                color: model.netabareColor(
+                                                        posts.netabare)
+                                                    ? Colors.grey
+                                                    : Colors.blue,
+                                              ),
                                               child: Text(
                                                 posts.netabare.toString(),
                                                 style: TextStyle(
-                                                    color: Colors.red),
+                                                  color: model.netabareColor(
+                                                      posts.netabare)
+                                                      ? Colors.white
+                                                      : Colors.white,),
                                               ),
                                             ),
                                             Expanded(child: Container()),
@@ -312,7 +360,93 @@ class TimeLinePage extends StatelessWidget {
                             Divider(
                               color: Color(0xFF27AA96),
                             ),
-                            AccountParts(),
+                            //--------
+                            SizedBox(
+                              height: 50,
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Container(
+                                      width: 50,
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          image: DecorationImage(
+                                            fit: BoxFit.cover,
+                                            image: AssetImage(
+                                                "assets/images/suiyoubi.jpg"),
+                                          )),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Expanded(
+                                    flex: 6,
+                                    child: Container(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Expanded(
+                                            flex: 2,
+                                            child: Text(
+                                              "アサノ111111111111",
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            flex: 1,
+                                            child: Text(
+                                                (posts.uptime!=null)
+                                                ? posts.uptime.toString()
+                                                :  "kizainasi",
+                                              style: TextStyle(
+                                                  color: Colors.blueGrey),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                      flex: 1,
+                                      child: PopupMenuButton(
+                                        icon: Icon(Icons.more),
+                                        onSelected: (PostMenu value) =>
+                                            popMenuSelected(context, value),
+                                        itemBuilder: (context) {
+                                          return [
+                                            PopupMenuItem(
+                                              value: PostMenu.EDIT,
+                                              child: Text("編集"),
+                                            ),
+                                            PopupMenuItem(
+                                              value: PostMenu.DELETE,
+                                              child: Text("削除"),
+                                              onTap: () async{
+                                                await showConfirmDialog(
+                                                    context, posts, model);
+                                              }
+                                            ),
+                                            PopupMenuItem(
+                                              value: PostMenu.SHARE,
+                                              child: Text("シェア"),
+                                            ),
+                                          ];
+                                        },
+                                      )),
+                                ],
+                              ),
+                            ),
+                            //-------
                             Divider(
                               color: Color(0xFF27AA96),
                             ),
@@ -335,124 +469,153 @@ class TimeLinePage extends StatelessWidget {
       ),
     );
   }
-}
 
-Widget StarReview(BuildContext context) {
-  return Column(
-    children: [
-      SizedBox(
-        height: 10,
-      ),
-      Container(
-        alignment: Alignment.center,
-        width: 70,
-        height: 20,
-        child: Text("★3.9"),
-        decoration: BoxDecoration(
-          color: Colors.yellow.withOpacity(0.7),
-          borderRadius: BorderRadius.circular(20),
-          // border: Border.all(color: Colors.blue, width: 2),
-        ),
-      ),
-    ],
-  );
-}
-
-class AccountParts extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 50,
-      child: Row(
-        children: [
-          SizedBox(
-            width: 5,
-          ),
-          Expanded(
-            flex: 2,
-            child: Container(
-              width: 50,
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: AssetImage("assets/images/suiyoubi.jpg"),
-                  )),
-            ),
-          ),
-          SizedBox(
-            width: 10,
-          ),
-          Expanded(
-            flex: 6,
-            child: Container(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      "アサノ111111111111",
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Text(
-                      "2021/10/31 12:00",
-                      style: TextStyle(color: Colors.blueGrey),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Expanded(
-              flex: 1,
-              child: PopupMenuButton(
-                icon: Icon(Icons.more),
-                onSelected: (PostMenu value) => popMenuSelected(context, value),
-                itemBuilder: (context) {
-                  return [
-                    PopupMenuItem(
-                      value: PostMenu.EDIT,
-                      child: Text("編集"),
-                    ),
-                    PopupMenuItem(
-                      value: PostMenu.DELETE,
-                      child: Text("削除"),
-                    ),
-                    PopupMenuItem(
-                      value: PostMenu.SHARE,
-                      child: Text("シェア"),
-                    ),
-                  ];
+  Future showConfirmDialog(
+      BuildContext context, Post post, TimeLineModel model) {
+    return showDialog(
+        context: context,
+        builder: (_) {
+          return AlertDialog(
+            title: Text("?????"),
+            content: Text("${post.title}を削除しますか？"),
+            actions: [
+              TextButton(
+                child: Text("cancel"),
+                onPressed: () {
+                  Navigator.pop(context);
                 },
-              )),
-        ],
-      ),
-    );
+              ),
+              TextButton(
+                child: Text("Yes"),
+                onPressed: () async {
+                  // await model.deleteTimeLine(post);
+                  Navigator.pop(context);
+                  final snackbar = SnackBar(
+                    backgroundColor: Colors.deepPurpleAccent,
+                    content: Text("${post.title}を削除しました"),
+                  );
+                  model.fetchPost();
+                  ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                },
+              ),
+            ],
+          );
+        });
   }
 
-  popMenuSelected(BuildContext context, PostMenu selectedMenu) {
+   popMenuSelected(BuildContext context, PostMenu selectedMenu) {
     switch (selectedMenu) {
-      case PostMenu.EDIT:
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => TimeLinePage(),
-          ),
-        );
+      case PostMenu.DELETE:
+
         break;
       case PostMenu.SHARE:
         break;
-      case PostMenu.DELETE:
+      case PostMenu.EDIT:
         break;
     }
   }
+
+
 }
+//
+// class AccountParts extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return SizedBox(
+//       height: 50,
+//       child: Row(
+//         children: [
+//           SizedBox(
+//             width: 5,
+//           ),
+//           Expanded(
+//             flex: 2,
+//             child: Container(
+//               width: 50,
+//               decoration: BoxDecoration(
+//                   shape: BoxShape.circle,
+//                   image: DecorationImage(
+//                     fit: BoxFit.cover,
+//                     image: AssetImage("assets/images/suiyoubi.jpg"),
+//                   )),
+//             ),
+//           ),
+//           SizedBox(
+//             width: 10,
+//           ),
+//           Expanded(
+//             flex: 6,
+//             child: Container(
+//               child: Column(
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   Expanded(
+//                     flex: 2,
+//                     child: Text(
+//                       "アサノ111111111111",
+//                       style:
+//                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+//                     ),
+//                   ),
+//                   Expanded(
+//                     flex: 1,
+//                     child: Text(
+//                       "2021/10/31 12:00",
+//                       style: TextStyle(color: Colors.blueGrey),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ),
+//           Expanded(
+//               flex: 1,
+//               child: PopupMenuButton(
+//                 icon: Icon(Icons.more),
+//                 onSelected: (PostMenu value) => popMenuSelected(context, value),
+//                 itemBuilder: (context) {
+//                   return [
+//                     PopupMenuItem(
+//                       value: PostMenu.EDIT,
+//                       child: Text("編集"),
+//                     ),
+//                     PopupMenuItem(
+//                       value: PostMenu.DELETE,
+//                       child: Text("削除"),
+//                       onTap: ()async{
+//                         await
+//                       },
+//                     ),
+//                     PopupMenuItem(
+//                       value: PostMenu.SHARE,
+//                       child: Text("シェア"),
+//                     ),
+//                   ];
+//                 },
+//               )),
+//         ],
+//       ),
+//     );
+//   }
+//
+//   popMenuSelected(BuildContext context, PostMenu selectedMenu) {
+//     switch (selectedMenu) {
+//       case PostMenu.EDIT:
+//         Navigator.push(
+//           context,
+//           MaterialPageRoute(
+//             builder: (_) => TimeLinePage(),
+//           ),
+//         );
+//         break;
+//       case PostMenu.SHARE:
+//         break;
+//       case PostMenu.DELETE:
+//         break;
+//     }
+//   }
+// }
 
 class ActionIconParts extends StatelessWidget {
   @override
@@ -494,7 +657,7 @@ class ActionIconParts extends StatelessWidget {
               SizedBox(
                 width: 10,
               ),
-              Center(child: Text("2223")),
+              Center(child: Text("223")),
             ],
           ),
         ),

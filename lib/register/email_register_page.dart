@@ -1,4 +1,5 @@
 
+import 'package:conte_kyoudokaihatsu/home_page.dart';
 import 'package:conte_kyoudokaihatsu/register/register_model.dart';
 import 'package:conte_kyoudokaihatsu/timeline/timeline_page.dart';
 import 'package:flutter/material.dart';
@@ -76,7 +77,7 @@ class EmailRegisterPage extends StatelessWidget {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => TimeLinePage()));
+                                      builder: (context) => HomePage()));
                               // Navigator.of(context).pushReplacement(
                               //   MaterialPageRoute(builder: (context)=>TimeLinePage()),
                               // );
