@@ -1,5 +1,6 @@
 import 'package:conte_kyoudokaihatsu/home_page.dart';
 import 'package:conte_kyoudokaihatsu/post_model.dart';
+import 'package:conte_kyoudokaihatsu/style.dart';
 import 'package:conte_kyoudokaihatsu/timeline/timeline_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
@@ -20,24 +21,24 @@ class _PostPageState extends State<PostPage> {
   var sliderText = "評価";
   double changeValue = 0.0;
 
-  var labelText='yy/mm/dd';
-
-  Future<void> selectData(BuildContext context) async {
-    final DateTime? selected = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2015),
-      lastDate: DateTime(2025),
-    );
-
-
-    if (selected!=null){
-      setState(() {
-        labelText=(DateFormat('yyyy/MM/dd E')).format(selected);
-
-      });
-    }
-  }
+  // var labelText='yy/mm/dd';
+  //
+  // Future<void> selectData(BuildContext context) async {
+  //   final DateTime? selected = await showDatePicker(
+  //     context: context,
+  //     initialDate: DateTime.now(),
+  //     firstDate: DateTime(2015),
+  //     lastDate: DateTime(2025),
+  //   );
+  //
+  //
+  //   if (selected!=null){
+  //     setState(() {
+  //       labelText=(DateFormat('yyyy/MM/dd E')).format(selected);
+  //
+  //     });
+  //   }
+  // }
 
   @override
   void initState() {
@@ -141,9 +142,9 @@ class _PostPageState extends State<PostPage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(labelText),
+                            Text(model.conteDate.toString(),style: conteDateFont),
                             IconButton(icon: Icon(Icons.date_range),
-                              onPressed: ()=>selectData(context),),
+                              onPressed: ()=>model.selectData(context),),
                           ],
                         ),
 
@@ -181,7 +182,9 @@ class _PostPageState extends State<PostPage> {
                         ),
                         Container(),
                         TextFormField(
-                            maxLines: 5,
+                            maxLength: null,
+                            maxLines: null,
+                            textInputAction: TextInputAction.newline,
                             obscureText: false,
                             keyboardType: TextInputType.emailAddress,
                             decoration: InputDecoration(
