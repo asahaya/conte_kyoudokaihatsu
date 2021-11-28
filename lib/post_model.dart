@@ -20,9 +20,10 @@ class PostModel extends ChangeNotifier {
   DateTime? uptime;
   // late List<String?> calImages;
   int? selectnumber = 0;
-  String? conteDate;
+  String conteDate="配信日を選択-----＞";
   String? conteDateMD;
   String? conteDateEE;
+  Timestamp? uploadPostTime;
 
   File? imageFile;
   final picker1=ImagePicker();
@@ -121,6 +122,7 @@ class PostModel extends ChangeNotifier {
       'conteDate':conteDate,
       'conteDateMD':conteDateMD,
       'conteDateEE':conteDateEE,
+      'uploadPostTime':Timestamp.now(),
     });
 
 
@@ -134,6 +136,29 @@ class PostModel extends ChangeNotifier {
     }
   }
 
+  var labelText='yy/mm/dd';
+  var labelText2='yy/mm/dd';
+  var labelText3='yy/mm/dd';
+
+  Future<DateTime?> selectData(BuildContext context) async {
+    final DateTime? selected = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2015),
+      lastDate: DateTime(2025),
+    );
+
+
+    if (selected!=null){
+        labelText=(DateFormat('yyyy/MM/dd E')).format(selected);
+        labelText2=(DateFormat('MM/dd')).format(selected);
+        labelText3=(DateFormat('E')).format(selected);
+        conteDate=labelText;
+        conteDateMD=labelText2;
+        conteDateEE=labelText3;
+    }
+    notifyListeners();
+  }
 
 
 }

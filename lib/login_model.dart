@@ -1,3 +1,5 @@
+
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -32,6 +34,7 @@ class LoginModel extends ChangeNotifier {
     notifyListeners();
   }
 
+
   Future login() async {
     this.email = emailCon.text;
     this.password = passCon.text;
@@ -47,4 +50,15 @@ class LoginModel extends ChangeNotifier {
 
     }
   }
+  final FirebaseAuth _auth =FirebaseAuth.instance;
+
+  Future<bool> judgeSignIn()async{
+    final firebaseUser=_auth.currentUser;
+    //ある
+    if(firebaseUser!=null){
+      return true;
+    }//ない
+    return false;
+  }
+
 }

@@ -15,7 +15,7 @@ class TimeLineModel extends ChangeNotifier {
   void fetchPost() async {
     // final QuerySnapshot snapshot =
     //     await FirebaseFirestore.instance.collection("post").get();
-    final QuerySnapshot snapshot=await _userCollection.get();
+    final QuerySnapshot snapshot=await _userCollection.orderBy("uploadPostTime",descending:true).get();
 
     // final uid=FirebaseAuth.instance.currentUser!.uid;
     // final usersnapshot=await FirebaseFirestore.instance.collection("account").doc(uid).get();
@@ -42,7 +42,8 @@ class TimeLineModel extends ChangeNotifier {
       final String? conteDate=data['conteDate'];
       final String? conteDateMD=data['conteDateMD'];
       final String? conteDateEE=data['conteDateEE'];
-      return Post(id,title,platform,review,star,netabare,imageURL1,uptime,conteDate,conteDateMD,conteDateEE);
+      final Timestamp uploadPostTime=data['uploadPostTime'];
+      return Post(id,title,platform,review,star,netabare,imageURL1,uptime,conteDate,conteDateMD,conteDateEE,uploadPostTime);
     }).toList();
 
     this.post=post;

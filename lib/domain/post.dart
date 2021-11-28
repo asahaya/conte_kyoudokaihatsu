@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 // return Post(id,title,platform,review,star,netabare);
@@ -18,6 +19,7 @@ class Post {
       this.conteDate,
   this.conteDateMD,
   this.conteDateEE,
+      this.uploadPostTime,
   );
 
   String id;
@@ -34,6 +36,7 @@ class Post {
   String? conteDate;
   String? conteDateMD;
   String? conteDateEE;
+  Timestamp? uploadPostTime;
 
 
 }

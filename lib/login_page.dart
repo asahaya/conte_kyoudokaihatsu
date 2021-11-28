@@ -109,32 +109,32 @@ class LoginPage extends StatelessWidget {
                   SizedBox(
                     height: 10,
                   ),
-                  SizedBox(
-                    width: 220,
-                    height: 40,
-                    child: ElevatedButton(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                              height: 25,
-                              width: 40,
-                              child: CircleAvatar(
-                                  child:
-                                      Image.asset("assets/images/google.jpg"))),
-                          Text("でログイン"),
-                        ],
-                      ),
-                      style: ElevatedButton.styleFrom(
-                          textStyle: TextStyle(fontSize: 20),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          onPrimary: Colors.black,
-                          primary: Colors.white),
-                      onPressed: () {},
-                    ),
-                  ),
+                  // SizedBox(
+                  //   width: 220,
+                  //   height: 40,
+                  //   child: ElevatedButton(
+                  //     child: Row(
+                  //       mainAxisAlignment: MainAxisAlignment.center,
+                  //       children: [
+                  //         SizedBox(
+                  //             height: 25,
+                  //             width: 40,
+                  //             child: CircleAvatar(
+                  //                 child:
+                  //                     Image.asset("assets/images/google.jpg"))),
+                  //         Text("でログイン"),
+                  //       ],
+                  //     ),
+                  //     style: ElevatedButton.styleFrom(
+                  //         textStyle: TextStyle(fontSize: 20),
+                  //         shape: RoundedRectangleBorder(
+                  //           borderRadius: BorderRadius.circular(50),
+                  //         ),
+                  //         onPrimary: Colors.black,
+                  //         primary: Colors.white),
+                  //     onPressed: () {},
+                  //   ),
+                  // ),
                   SizedBox(
                     height: 20,
                   ),
