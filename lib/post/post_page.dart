@@ -1,5 +1,5 @@
 import 'package:conte_kyoudokaihatsu/home_page.dart';
-import 'package:conte_kyoudokaihatsu/post_model.dart';
+import 'package:conte_kyoudokaihatsu/post/post_model.dart';
 import 'package:conte_kyoudokaihatsu/style.dart';
 import 'package:conte_kyoudokaihatsu/timeline/timeline_page.dart';
 import 'package:flutter/material.dart';
@@ -83,6 +83,7 @@ class _PostPageState extends State<PostPage> {
 
   @override
   Widget build(BuildContext context) {
+
     return ChangeNotifierProvider<PostModel>(
       create: (_) => PostModel(),
       child: Scaffold(
@@ -110,7 +111,7 @@ class _PostPageState extends State<PostPage> {
                       );
                     } catch (e) {
                       final snackbar = SnackBar(
-                          backgroundColor: Colors.greenAccent,
+                          backgroundColor: Colors.blue,
                           content: Text(e.toString()));
                       ScaffoldMessenger.of(context).showSnackBar(snackbar);
                       print(e);

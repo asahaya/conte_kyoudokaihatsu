@@ -2,7 +2,9 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:conte_kyoudokaihatsu/domain/post.dart';
 import 'package:conte_kyoudokaihatsu/domain/postmenu.dart';
 import 'package:conte_kyoudokaihatsu/home_page.dart';
-import 'package:conte_kyoudokaihatsu/login_page.dart';
+import 'package:conte_kyoudokaihatsu/login/login_model.dart';
+import 'package:conte_kyoudokaihatsu/login/login_page.dart';
+import 'package:conte_kyoudokaihatsu/profile/profile_model.dart';
 import 'package:conte_kyoudokaihatsu/profile/profile_page.dart';
 import 'package:conte_kyoudokaihatsu/style.dart';
 import 'package:conte_kyoudokaihatsu/timeline/timeline_model.dart';
@@ -12,13 +14,22 @@ import 'package:provider/provider.dart';
 
 class TimeLinePage extends StatelessWidget {
 
-
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<TimeLineModel>(
-      create: (_) =>
-      TimeLineModel()
-        ..fetchPost(),
+    // final timeLineVM=context.watch<TimeLineModel>();
+    // final profileVM=context.watch<ProfileModel>();
+
+    // return ChangeNotifierProvider<TimeLineModel>(
+    //     create: (_) => TimeLineModel()..fetchPost(),
+    //     child: Scaffold(
+        return MultiProvider(providers: [
+        ChangeNotifierProvider<TimeLineModel>(create: (_)=>TimeLineModel()..fetchPost()),
+    ChangeNotifierProvider<ProfileModel>(create: (_)=>ProfileModel()..fetchUser()),
+    ChangeNotifierProvider<LoginModel>(create: (_)=>LoginModel()),
+    ],
+
+        //   ChangeNotifierProvider<TimeLineModel>(
+        // create: (_) => TimeLineModel()..fetchPost(),
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -52,9 +63,7 @@ class TimeLinePage extends StatelessWidget {
             if (post == null) {
               return Center(child: CircularProgressIndicator());
             }
-            final List<Widget> widgets = post
-                .map(
-                  (posts) =>
+            final List<Widget> widgets = post.map((posts) =>
                   SingleChildScrollView(
                     child: Card(
                       child: Container(
@@ -404,91 +413,100 @@ class TimeLinePage extends StatelessWidget {
                               color: Color(0xFF27AA96),
                             ),
                             //--------
-                            SizedBox(
-                              height: 50,
-                              child: Row(
-                                children: [
-                                  SizedBox(
-                                    width: 5,
-                                  ),
-                                  Expanded(
-                                    flex: 2,
-                                    child: Container(
-                                      width: 50,
-                                      decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          image: DecorationImage(
-                                            fit: BoxFit.cover,
-                                            image: AssetImage(
-                                                "assets/images/suiyoubi.jpg"),
-                                          )),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Expanded(
-                                    flex: 6,
-                                    child: Container(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                        children: [
-                                          Expanded(
-                                            flex: 2,
-                                            child: Text(
-                                              "アサノ111111111111",
-                                              style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 1,
-                                            child:(posts.uploadPostTime!=null)
-                                          ?  Text(DateFormat('yyyy-MM-dd   kk:mm:ss').format(posts.uploadPostTime!.toDate()).toString())
-                                          : Text(""),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                      flex: 1,
-                                      child: PopupMenuButton(
-                                        icon: Icon(Icons.more),
-                                        onSelected: (PostMenu value) =>
-                                            popMenuSelected(context, value),
-                                        itemBuilder: (context) {
-                                          return [
-                                            PopupMenuItem(
-                                              value: PostMenu.EDIT,
-                                              child: Text("編集"),
-                                            ),
-                                            PopupMenuItem(
-                                                value: PostMenu.DELETE,
-                                                child: Text("削除"),
-                                                onTap: () async {
-                                                  await showConfirmDialog(
-                                                      context, posts, model);
-                                                }
-                                            ),
-                                            PopupMenuItem(
-                                              value: PostMenu.SHARE,
-                                              child: Text("シェア"),
-                                            ),
-                                          ];
-                                        },
-                                      )),
-                                ],
-                              ),
-                            ),
-                            //-------
                             Divider(
                               color: Color(0xFF27AA96),
                             ),
+                            //-------
+                      Consumer<ProfileModel>(builder: (context, model, child) {
+                        final proVM=context.watch<ProfileModel>();
+                                   return SizedBox(
+                                      height: 50,
+                                      child: Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 5,
+                                          ),
+                                          Expanded(
+                                            flex: 2,
+                                            child: Container(
+                                              width: 50,
+                                              decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  image: DecorationImage(
+                                                    fit: BoxFit.cover,
+                                                    image: proVM.proIconURL!=null
+                                                      ? NetworkImage("${proVM.proIconURL}") as ImageProvider
+                                                      : AssetImage("assets/images/not_user.png") ,
+                                                  )),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Expanded(
+                                            flex: 6,
+                                            child: Container(
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                                children: [
+                                                  // Consumer<ProfileModel>(builder: (context, model, child) {
+                                                  //   final proVM=context.watch<ProfileModel>();
+                                                      Expanded(
+                                                        flex: 2,
+                                                        child: Text(
+                                                          proVM.proName ??"not",
+                                                          style: TextStyle(
+                                                              fontSize: 20,
+                                                              fontWeight: FontWeight.bold),
+                                                        ),
+                                                      ),
+
+                                                  Expanded(
+                                                    flex: 1,
+                                                    child:(posts.uploadPostTime!=null)
+                                                  ?  Text(DateFormat('yyyy-MM-dd   kk:mm:ss').format(posts.uploadPostTime!.toDate()).toString())
+                                                  : Text(""),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                              flex: 1,
+                                              child: PopupMenuButton(
+                                                icon: Icon(Icons.more),
+                                                onSelected: (PostMenu value) =>
+                                                    popMenuSelected(context, value),
+                                                itemBuilder: (context) {
+                                                  return [
+                                                    PopupMenuItem(
+                                                      value: PostMenu.EDIT,
+                                                      child: Text("編集"),
+                                                    ),
+                                                    // PopupMenuItem(
+                                                    //     value: PostMenu.DELETE,
+                                                    //     child: Text("削除"),
+                                                    //     onTap: () async {
+                                                    //       await showConfirmDialog(
+                                                    //           context, posts, model);
+                                                    //     }
+                                                    // ),
+                                                    PopupMenuItem(
+                                                      value: PostMenu.SHARE,
+                                                      child: Text("シェア"),
+                                                    ),
+                                                  ];
+                                                },
+                                              )),
+                                        ],
+                                      ),
+                                    );
+                                 }
+                               ),
+
                             ActionIconParts(),
                             SizedBox(
                               height: 10,

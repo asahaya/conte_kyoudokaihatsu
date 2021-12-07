@@ -1,15 +1,21 @@
-
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:conte_kyoudokaihatsu/profile/profile_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 class PostModel extends ChangeNotifier {
+
+   PostModel({this.proVM});
+
+  final ProfileModel? proVM;
+
   String? id;
-  // return Post(id,title,platform,review,star,netabare);
+  String? user;
   String? title;
   String? platform;
   String? review;
@@ -75,26 +81,18 @@ class PostModel extends ChangeNotifier {
   }
 
 
-
-
-
   Future addPost() async {
     if (title == null) {
-      throw "???";
+      throw "コンテンツ名を記載してください";
     }
     if (review == null) {
-      throw "???";
-    }
-    if (platform == null) {
-      // switch (platform){
-      //   case
-      // }
+      throw "レビューの記載をしてください";
     }
     if (netabare == null) {
-      throw "netanasi>>>>>>>>>";
+      throw "ネタバレのありなしを選択してください";
     }
     if(star==null){
-      throw ">starnashi___________>";
+      throw "☆評価をしましょう";
     }
    final doc=FirebaseFirestore.instance.collection('post').doc();
 
@@ -104,10 +102,15 @@ class PostModel extends ChangeNotifier {
     final task=await FirebaseStorage.instance.ref('post/${doc.id}').putFile(imageFile!);
     imageURL1 =await task.ref.getDownloadURL();
     }
-    uptime=await DateTime.now();
-
+    uptime= DateTime.now();
+//--------------
+    final uid=FirebaseAuth.instance.currentUser!.uid;
+    final usersnapshot=await FirebaseFirestore.instance.collection("account").doc(uid).get();
+    final userdata=usersnapshot.data();
+//------------
     await doc.set({
       'id': id,
+      'user': user=userdata!["proName"],
       // return Post(id,title,platform,review,star,netabare);
       'title': title,
       'platform': platform,

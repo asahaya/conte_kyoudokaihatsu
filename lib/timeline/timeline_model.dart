@@ -6,9 +6,8 @@ import 'package:flutter/material.dart';
 class TimeLineModel extends ChangeNotifier {
 
 
-
-
   final _userCollection = FirebaseFirestore.instance.collection('post');
+  final _accountCollection = FirebaseAuth.instance;
 
   List<Post>? post;
 
@@ -16,18 +15,30 @@ class TimeLineModel extends ChangeNotifier {
     // final QuerySnapshot snapshot =
     //     await FirebaseFirestore.instance.collection("post").get();
     final QuerySnapshot snapshot=await _userCollection.orderBy("uploadPostTime",descending:true).get();
+    // final QuerySnapshot usersnapshot=await _accountCollection.currentUser.uid;
 
     // final uid=FirebaseAuth.instance.currentUser!.uid;
     // final usersnapshot=await FirebaseFirestore.instance.collection("account").doc(uid).get();
     // final userdata=usersnapshot.data();
 
+
+
+
+    final uid=FirebaseAuth.instance.currentUser!.uid;
+    final usersnapshot=await FirebaseFirestore.instance.collection("account").doc(uid).get();
+    final userdata=usersnapshot.data();
+
+
+
+    final FirebaseAuth firebaseAuthCollection =FirebaseAuth.instance;
+
     final List<Post> post = snapshot.docs.map((DocumentSnapshot document) {
       Map<String, dynamic> data = document.data() as Map<String, dynamic>;
 
-    DateTime? uptime=DateTime.now();
+    DateTime uptime=DateTime.now();
 
       final String id = document.id;
-
+      final String user = userdata!['user'];
       final String title = data['title'];
       final String platform = data['platform'].toString();
       final String review = data['review'];
@@ -43,7 +54,7 @@ class TimeLineModel extends ChangeNotifier {
       final String? conteDateMD=data['conteDateMD'];
       final String? conteDateEE=data['conteDateEE'];
       final Timestamp uploadPostTime=data['uploadPostTime'];
-      return Post(id,title,platform,review,star,netabare,imageURL1,uptime,conteDate,conteDateMD,conteDateEE,uploadPostTime);
+      return Post(id,user,title,platform,review,star,netabare,imageURL1,uptime,conteDate,conteDateMD,conteDateEE,uploadPostTime);
     }).toList();
 
     this.post=post;
