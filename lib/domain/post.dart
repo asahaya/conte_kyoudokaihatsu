@@ -6,7 +6,7 @@ class Post {
   Post(
       //ここの順番を間違えると配置がおかしくなる
     this.id,
-    this.user,
+    // this.user,
     this.title,
     this.platform,
     this.review,
@@ -24,7 +24,7 @@ class Post {
   );
 
   String id;
-  String user;
+  // String user;
   String title;
   String platform;
   String review;

@@ -1,9 +1,11 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:conte_kyoudokaihatsu/domain/post.dart';
 import 'package:conte_kyoudokaihatsu/domain/postmenu.dart';
 import 'package:conte_kyoudokaihatsu/home_page.dart';
 import 'package:conte_kyoudokaihatsu/login/login_model.dart';
 import 'package:conte_kyoudokaihatsu/login/login_page.dart';
+import 'package:conte_kyoudokaihatsu/post/post_model.dart';
 import 'package:conte_kyoudokaihatsu/profile/profile_model.dart';
 import 'package:conte_kyoudokaihatsu/profile/profile_page.dart';
 import 'package:conte_kyoudokaihatsu/style.dart';
@@ -13,7 +15,6 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class TimeLinePage extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     // final timeLineVM=context.watch<TimeLineModel>();
@@ -22,14 +23,17 @@ class TimeLinePage extends StatelessWidget {
     // return ChangeNotifierProvider<TimeLineModel>(
     //     create: (_) => TimeLineModel()..fetchPost(),
     //     child: Scaffold(
-        return MultiProvider(providers: [
-        ChangeNotifierProvider<TimeLineModel>(create: (_)=>TimeLineModel()..fetchPost()),
-    ChangeNotifierProvider<ProfileModel>(create: (_)=>ProfileModel()..fetchUser()),
-    ChangeNotifierProvider<LoginModel>(create: (_)=>LoginModel()),
-    ],
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<TimeLineModel>(
+            create: (_) => TimeLineModel()..fetchPost()),
+        ChangeNotifierProvider<ProfileModel>(
+            create: (_) => ProfileModel()..fetchUser()),
+        ChangeNotifierProvider<LoginModel>(create: (_) => LoginModel()),
+      ],
 
-        //   ChangeNotifierProvider<TimeLineModel>(
-        // create: (_) => TimeLineModel()..fetchPost(),
+      //   ChangeNotifierProvider<TimeLineModel>(
+      // create: (_) => TimeLineModel()..fetchPost(),
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -59,12 +63,26 @@ class TimeLinePage extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Consumer<TimeLineModel>(builder: (context, model, child) {
             final List<Post>? post = model.post;
+            // final userId = model.userId;
+            Consumer<PostModel>(builder: (context,model,child){
+                  final userId=model.user;
 
+            return FutureBuilder(
+                future: FirebaseFirestore.instance.collection('account').doc(userId).get(),
+                builder: (BuildContext context,AsyncSnapshot<DocumentSnapshot> snapshot) {
+                  if(!snapshot.hasData){
+                    return SizedBox();
+                  }
+                  final user=snapshot.data!.data() as Map<String,dynamic>;
+                  return Text(user['proName']);
+                });
+            });
             if (post == null) {
               return Center(child: CircularProgressIndicator());
             }
-            final List<Widget> widgets = post.map((posts) =>
-                  SingleChildScrollView(
+            final List<Widget> widgets = post
+                .map(
+                  (posts) => SingleChildScrollView(
                     child: Card(
                       child: Container(
                         decoration: BoxDecoration(
@@ -93,24 +111,33 @@ class TimeLinePage extends StatelessWidget {
                                     ),
                                     child: posts.imageURL1 != null
                                         ? ConstrainedBox(
-                                      constraints: BoxConstraints.expand(height: 210),
-                                          child: Image.network(
-                                      posts.imageURL1!, fit: BoxFit.cover,),
-                                        )
-                                        : Stack(
-                                          children: [
-                                            Center(child: Image.asset("assets/images/color_bar.png")),
-                                            Center(
-                                              child: SizedBox(
-                                                height: 17,
-                                                width: 100,
-                                                child: Container(
-                                                    color: Colors.white,
-                                                    child: Center(child: Text("NO IMAGE",style: titleFont,))),
-                                              ),
+                                            constraints: BoxConstraints.expand(
+                                                height: 210),
+                                            child: Image.network(
+                                              posts.imageURL1!,
+                                              fit: BoxFit.cover,
                                             ),
-                                          ],
-                                        ),
+                                          )
+                                        : Stack(
+                                            children: [
+                                              Center(
+                                                  child: Image.asset(
+                                                      "assets/images/color_bar.png")),
+                                              Center(
+                                                child: SizedBox(
+                                                  height: 17,
+                                                  width: 100,
+                                                  child: Container(
+                                                      color: Colors.white,
+                                                      child: Center(
+                                                          child: Text(
+                                                        "NO IMAGE",
+                                                        style: titleFont,
+                                                      ))),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                     // child: CarouselSlider(
                                     //   options: CarouselOptions(
                                     //     autoPlay: true,
@@ -167,13 +194,13 @@ class TimeLinePage extends StatelessWidget {
                                           height: 20,
                                           child: Consumer<TimeLineModel>(
                                               builder: (context, model, child) {
-                                                return Text("★${posts.star}");
-                                              }),
+                                            return Text("★${posts.star}");
+                                          }),
                                           decoration: BoxDecoration(
                                             color:
-                                            Colors.yellow.withOpacity(0.7),
+                                                Colors.yellow.withOpacity(0.7),
                                             borderRadius:
-                                            BorderRadius.circular(20),
+                                                BorderRadius.circular(20),
                                             // border: Border.all(color: Colors.blue, width: 2),
                                           ),
                                         ),
@@ -215,53 +242,61 @@ class TimeLinePage extends StatelessWidget {
                                         height: 50,
                                         decoration: BoxDecoration(
                                           borderRadius:
-                                          BorderRadius.circular(10),
+                                              BorderRadius.circular(10),
                                           color: Colors.black.withOpacity(0.1),
                                         ),
                                         child: Column(
                                           mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                              MainAxisAlignment.center,
                                           crossAxisAlignment:
-                                          CrossAxisAlignment.center,
+                                              CrossAxisAlignment.center,
                                           children: [
                                             Expanded(
                                               flex: 2,
                                               child: Center(
-                                                child: (posts.conteDateMD != null)
-                                                    ? Text(
-                                                  posts.conteDateMD.toString(),
-                                                  style: TextStyle(
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                      FontWeight.bold),
-                                                )
-                                                  : Text(
-                                                  "-/-",
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight:
-                                              FontWeight.bold),
-                                        ),
+                                                child:
+                                                    (posts.conteDateMD != null)
+                                                        ? Text(
+                                                            posts.conteDateMD
+                                                                .toString(),
+                                                            style: TextStyle(
+                                                                fontSize: 20,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          )
+                                                        : Text(
+                                                            "-/-",
+                                                            style: TextStyle(
+                                                                fontSize: 20,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
                                               ),
                                             ),
                                             Expanded(
                                               flex: 2,
                                               child: Center(
-                                                child: (posts.conteDateEE != null)
-                                                    ? Text(
-                                                  posts.conteDateEE.toString(),
-                                                  style: TextStyle(
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                      FontWeight.bold),
-                                                )
-                                                    : Text(
-                                                  "---",
-                                                  style: TextStyle(
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                      FontWeight.bold),
-                                                ),
+                                                child:
+                                                    (posts.conteDateEE != null)
+                                                        ? Text(
+                                                            posts.conteDateEE
+                                                                .toString(),
+                                                            style: TextStyle(
+                                                                fontSize: 20,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          )
+                                                        : Text(
+                                                            "---",
+                                                            style: TextStyle(
+                                                                fontSize: 20,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
                                               ),
                                             ),
                                           ],
@@ -272,24 +307,24 @@ class TimeLinePage extends StatelessWidget {
                                       flex: 30,
                                       child: Column(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.center,
+                                            MainAxisAlignment.center,
                                         children: [
                                           Container(
                                             height: 35,
                                             alignment: Alignment.center,
                                             decoration: BoxDecoration(
                                               borderRadius:
-                                              BorderRadius.circular(10),
+                                                  BorderRadius.circular(10),
                                               color:
-                                              Colors.grey.withOpacity(0.4),
+                                                  Colors.grey.withOpacity(0.4),
                                             ),
                                             child: Wrap(
                                               children: [
                                                 Center(
                                                     child: Text(
-                                                      posts.title,
-                                                      style: titleFont,
-                                                    )),
+                                                  posts.title,
+                                                  style: titleFont,
+                                                )),
                                               ],
                                             ),
                                           ),
@@ -303,18 +338,18 @@ class TimeLinePage extends StatelessWidget {
                                                       height: 15,
                                                       decoration: BoxDecoration(
                                                         borderRadius:
-                                                        BorderRadius
-                                                            .circular(10),
+                                                            BorderRadius
+                                                                .circular(10),
                                                         color: Colors.red
                                                             .withOpacity(0.9),
                                                       ),
                                                       child: Center(
                                                           child: Text(
-                                                            posts.platform,
-                                                            style: TextStyle(
-                                                                color:
+                                                        posts.platform,
+                                                        style: TextStyle(
+                                                            color:
                                                                 Colors.white),
-                                                          )),
+                                                      )),
                                                     ),
                                                   ],
                                                 ),
@@ -327,8 +362,8 @@ class TimeLinePage extends StatelessWidget {
                                                       height: 15,
                                                       decoration: BoxDecoration(
                                                         borderRadius:
-                                                        BorderRadius
-                                                            .circular(10),
+                                                            BorderRadius
+                                                                .circular(10),
                                                         color: Colors.grey
                                                             .withOpacity(0.9),
                                                       ),
@@ -365,24 +400,24 @@ class TimeLinePage extends StatelessWidget {
                                     padding: const EdgeInsets.all(8.0),
                                     child: Column(
                                       crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Row(
                                           children: [
                                             Container(
                                               decoration: BoxDecoration(
                                                 borderRadius:
-                                                BorderRadius.circular(7),
+                                                    BorderRadius.circular(7),
                                                 border: Border.all(
                                                     color: model.netabareColor(
-                                                        posts.netabare)
+                                                            posts.netabare)
                                                         ? Colors.red
                                                         : Colors
-                                                        .deepPurpleAccent,
+                                                            .deepPurpleAccent,
                                                     // color: model.netabareColor(posts.netabare),
                                                     width: 3),
                                                 color: model.netabareColor(
-                                                    posts.netabare)
+                                                        posts.netabare)
                                                     ? Colors.grey
                                                     : Colors.blue,
                                               ),
@@ -390,9 +425,10 @@ class TimeLinePage extends StatelessWidget {
                                                 posts.netabare.toString(),
                                                 style: TextStyle(
                                                   color: model.netabareColor(
-                                                      posts.netabare)
+                                                          posts.netabare)
                                                       ? Colors.white
-                                                      : Colors.white,),
+                                                      : Colors.white,
+                                                ),
                                               ),
                                             ),
                                             Expanded(child: Container()),
@@ -417,95 +453,105 @@ class TimeLinePage extends StatelessWidget {
                               color: Color(0xFF27AA96),
                             ),
                             //-------
-                      Consumer<ProfileModel>(builder: (context, model, child) {
-                        final proVM=context.watch<ProfileModel>();
-                                   return SizedBox(
-                                      height: 50,
-                                      child: Row(
-                                        children: [
-                                          SizedBox(
-                                            width: 5,
-                                          ),
-                                          Expanded(
-                                            flex: 2,
-                                            child: Container(
-                                              width: 50,
-                                              decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  image: DecorationImage(
-                                                    fit: BoxFit.cover,
-                                                    image: proVM.proIconURL!=null
-                                                      ? NetworkImage("${proVM.proIconURL}") as ImageProvider
-                                                      : AssetImage("assets/images/not_user.png") ,
-                                                  )),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Expanded(
-                                            flex: 6,
-                                            child: Container(
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                                children: [
-                                                  // Consumer<ProfileModel>(builder: (context, model, child) {
-                                                  //   final proVM=context.watch<ProfileModel>();
-                                                      Expanded(
-                                                        flex: 2,
-                                                        child: Text(
-                                                          proVM.proName ??"not",
-                                                          style: TextStyle(
-                                                              fontSize: 20,
-                                                              fontWeight: FontWeight.bold),
-                                                        ),
-                                                      ),
-
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child:(posts.uploadPostTime!=null)
-                                                  ?  Text(DateFormat('yyyy-MM-dd   kk:mm:ss').format(posts.uploadPostTime!.toDate()).toString())
-                                                  : Text(""),
-                                                  ),
-                                                ],
+                            Consumer<ProfileModel>(
+                                builder: (context, model, child) {
+                              final proVM = context.watch<ProfileModel>();
+                              return SizedBox(
+                                height: 50,
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                        width: 50,
+                                        decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            image: DecorationImage(
+                                              fit: BoxFit.cover,
+                                              image: proVM.proIconURL != null
+                                                  ? NetworkImage(
+                                                          "${proVM.proIconURL}")
+                                                      as ImageProvider
+                                                  : AssetImage(
+                                                      "assets/images/not_user.png"),
+                                            )),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Expanded(
+                                      flex: 6,
+                                      child: Container(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            // Consumer<ProfileModel>(builder: (context, model, child) {
+                                            //   final proVM=context.watch<ProfileModel>();
+                                            Expanded(
+                                              flex: 2,
+                                              child: Text(
+                                                proVM.proName ?? "not",
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight:
+                                                        FontWeight.bold),
                                               ),
                                             ),
-                                          ),
-                                          Expanded(
+
+                                            Expanded(
                                               flex: 1,
-                                              child: PopupMenuButton(
-                                                icon: Icon(Icons.more),
-                                                onSelected: (PostMenu value) =>
-                                                    popMenuSelected(context, value),
-                                                itemBuilder: (context) {
-                                                  return [
-                                                    PopupMenuItem(
-                                                      value: PostMenu.EDIT,
-                                                      child: Text("編集"),
-                                                    ),
-                                                    // PopupMenuItem(
-                                                    //     value: PostMenu.DELETE,
-                                                    //     child: Text("削除"),
-                                                    //     onTap: () async {
-                                                    //       await showConfirmDialog(
-                                                    //           context, posts, model);
-                                                    //     }
-                                                    // ),
-                                                    PopupMenuItem(
-                                                      value: PostMenu.SHARE,
-                                                      child: Text("シェア"),
-                                                    ),
-                                                  ];
-                                                },
-                                              )),
-                                        ],
+                                              child: (posts.uploadPostTime !=
+                                                      null)
+                                                  ? Text(DateFormat(
+                                                          'yyyy-MM-dd   kk:mm:ss')
+                                                      .format(posts
+                                                          .uploadPostTime!
+                                                          .toDate())
+                                                      .toString())
+                                                  : Text(""),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    );
-                                 }
-                               ),
+                                    ),
+                                    Expanded(
+                                        flex: 1,
+                                        child: PopupMenuButton(
+                                          icon: Icon(Icons.more),
+                                          onSelected: (PostMenu value) =>
+                                              popMenuSelected(context, value),
+                                          itemBuilder: (context) {
+                                            return [
+                                              PopupMenuItem(
+                                                value: PostMenu.EDIT,
+                                                child: Text("編集"),
+                                              ),
+                                              // PopupMenuItem(
+                                              //     value: PostMenu.DELETE,
+                                              //     child: Text("削除"),
+                                              //     onTap: () async {
+                                              //       await showConfirmDialog(
+                                              //           context, posts, model);
+                                              //     }
+                                              // ),
+                                              PopupMenuItem(
+                                                value: PostMenu.SHARE,
+                                                child: Text("シェア"),
+                                              ),
+                                            ];
+                                          },
+                                        )),
+                                  ],
+                                ),
+                              );
+                            }),
 
                             ActionIconParts(),
                             SizedBox(
@@ -516,7 +562,7 @@ class TimeLinePage extends StatelessWidget {
                       ),
                     ),
                   ),
-            )
+                )
                 .toList();
             return ListView(
               children: widgets,
@@ -527,8 +573,8 @@ class TimeLinePage extends StatelessWidget {
     );
   }
 
-  Future showConfirmDialog(BuildContext context, Post post,
-      TimeLineModel model) {
+  Future showConfirmDialog(
+      BuildContext context, Post post, TimeLineModel model) {
     return showDialog(
         context: context,
         builder: (_) {
@@ -570,8 +616,6 @@ class TimeLinePage extends StatelessWidget {
         break;
     }
   }
-
-
 }
 //
 // class AccountParts extends StatelessWidget {
