@@ -106,13 +106,14 @@ class PostModel extends ChangeNotifier {
 //--------------
     final uid=FirebaseAuth.instance.currentUser!.uid;
     final usersnapshot=await FirebaseFirestore.instance.collection("account").doc(uid).get();
-    // final userdata=usersnapshot.data();
+    final userdata=usersnapshot.data();
 
     final user=usersnapshot.data();
 //------------
     await doc.set({
       'id': id,
       'user': user!['uid'],
+      'proName':userdata!["proName"],
       // return Post(id,title,platform,review,star,netabare);
       'title': title,
       'platform': platform,

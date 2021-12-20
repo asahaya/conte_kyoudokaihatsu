@@ -37,7 +37,8 @@ class TimeLineModel extends ChangeNotifier {
     DateTime uptime=DateTime.now();
 
       final String id = document.id;
-      // final String user = data['user'];
+      final proName = userdata!["proName"];
+      final String userId = data['user'];
       final String title = data['title'];
       final String platform = data['platform'].toString();
       final String review = data['review'];
@@ -53,7 +54,7 @@ class TimeLineModel extends ChangeNotifier {
       final String? conteDateMD=data['conteDateMD'];
       final String? conteDateEE=data['conteDateEE'];
       final Timestamp uploadPostTime=data['uploadPostTime'];
-      return Post(id,title,platform,review,star,netabare,imageURL1,uptime,conteDate,conteDateMD,conteDateEE,uploadPostTime);
+      return Post(id,proName,title,platform,review,star,netabare,imageURL1,uptime,conteDate,conteDateMD,conteDateEE,uploadPostTime);
     }).toList();
 
     this.post=post;

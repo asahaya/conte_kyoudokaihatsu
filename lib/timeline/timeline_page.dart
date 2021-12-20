@@ -75,6 +75,7 @@ class TimeLinePage extends StatelessWidget {
                   }
                   final user=snapshot.data!.data() as Map<String,dynamic>;
                   return Text(user['proName']);
+
                 });
             });
             if (post == null) {
@@ -453,33 +454,34 @@ class TimeLinePage extends StatelessWidget {
                               color: Color(0xFF27AA96),
                             ),
                             //-------
-                            Consumer<ProfileModel>(
-                                builder: (context, model, child) {
-                              final proVM = context.watch<ProfileModel>();
-                              return SizedBox(
+                            // Consumer<ProfileModel>(
+                            //     builder: (context, model, child) {
+                            //   final proVM = context.watch<ProfileModel>();
+                            //   return
+                      SizedBox(
                                 height: 50,
                                 child: Row(
                                   children: [
                                     SizedBox(
                                       width: 5,
                                     ),
-                                    Expanded(
-                                      flex: 2,
-                                      child: Container(
-                                        width: 50,
-                                        decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            image: DecorationImage(
-                                              fit: BoxFit.cover,
-                                              image: proVM.proIconURL != null
-                                                  ? NetworkImage(
-                                                          "${proVM.proIconURL}")
-                                                      as ImageProvider
-                                                  : AssetImage(
-                                                      "assets/images/not_user.png"),
-                                            )),
-                                      ),
-                                    ),
+                                    // Expanded(
+                                    //   flex: 2,
+                                    //   child: Container(
+                                    //     width: 50,
+                                    //     decoration: BoxDecoration(
+                                    //         shape: BoxShape.circle,
+                                    //         image: DecorationImage(
+                                    //           fit: BoxFit.cover,
+                                    //           image: proVM.proIconURL != null
+                                    //               ? NetworkImage(
+                                    //                       "${proVM.proIconURL}")
+                                    //                   as ImageProvider
+                                    //               : AssetImage(
+                                    //                   "assets/images/not_user.png"),
+                                    //         )),
+                                    //   ),
+                                    // ),
                                     SizedBox(
                                       width: 10,
                                     ),
@@ -497,7 +499,7 @@ class TimeLinePage extends StatelessWidget {
                                             Expanded(
                                               flex: 2,
                                               child: Text(
-                                                proVM.proName ?? "not",
+                                                posts.proName,
                                                 style: TextStyle(
                                                     fontSize: 20,
                                                     fontWeight:
@@ -550,8 +552,8 @@ class TimeLinePage extends StatelessWidget {
                                         )),
                                   ],
                                 ),
-                              );
-                            }),
+                              ),
+                            // }),
 
                             ActionIconParts(),
                             SizedBox(
@@ -605,6 +607,8 @@ class TimeLinePage extends StatelessWidget {
           );
         });
   }
+
+
 
   popMenuSelected(BuildContext context, PostMenu selectedMenu) {
     switch (selectedMenu) {
@@ -778,3 +782,4 @@ class ActionIconParts extends StatelessWidget {
     );
   }
 }
+
